@@ -133,7 +133,7 @@ impl fmt::Write for Writer{
 lazy_static!{
     pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
         column_position: 0,
-        color_code: ColorCode::new(Color::Blue, Color::Black),
+        color_code: ColorCode::new(Color::Green, Color::Black),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
     });
 }
@@ -158,20 +158,67 @@ macro_rules! println {
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments){
     use core::fmt::Write;
-    WRITER.lock().write_fmt(args).unwrap();
+    use x86_64::instructions::interrupts;
+    interrupts::without_interrupts(|| {
+        WRITER.lock().write_fmt(args).unwrap();
+    });
 }
 
 
-// test function
-// pub fn print_something() {
-//     use core::fmt::Write;
-//     let mut writer:Writer = Writer {
-//         column_position: 0,
-//         color_code: ColorCode::new(Color::Magenta, Color::Black),
-//         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-//     };
 
-//     writer.write_byte(b'H');
-//     writer.write_string("IM a pro coder si señor ");
-//     write!(writer,"The data is {} and {}, operation 2 + 2 = {}",42,1.2,2+2).unwrap();
-// }
+#[test_case]
+fn test_println_simple(){
+    println!("testprint simple output");
+}
+#[test_case]
+fn test_println_many(){
+    for _ in 0..200{
+        println!("test_println_many output");
+    }
+}
+
+
+
+#[test_case]
+fn test_println_output() {
+    use core::fmt::Write;
+    use x86_64::instructions::interrupts;
+    let s = "Some test string that fits on a single line";
+    interrupts::without_interrupts(||{
+        let mut writer = WRITER.lock();
+        writeln!(writer ,"\n{}", s).expect("writeln failed");
+        for (i, c) in s.chars().enumerate() {
+            let screen_char = writer.buffer.characters[BUFFER_HEIGHT - 2][i].read();
+            assert_eq!(char::from(screen_char.ascii_char), c);
+        }
+    });
+}
+
+#[test_case]
+fn test_really_long_line(){
+    use core::fmt::Write;
+    use x86_64::instructions::interrupts;
+    let s:&str = "this is goign to be a really long string to test if the VGA buffer is working properly and if it can print a long that takes a multiple lines inside the buffer. ----------------------------------";
+    let len:usize = s.len();
+    let mut nlin = 1;
+
+    if len > BUFFER_WIDTH{
+        nlin = len / BUFFER_WIDTH + 1;
+    }
+    interrupts::without_interrupts(||{
+        let mut writer = WRITER.lock();
+        writeln!(writer,"\n{}",s).expect("writeln failed");
+        let mut rw_start:usize= BUFFER_HEIGHT- 2 - nlin;
+        let mut current_char:usize = 0;
+        for (i,c) in s.chars().enumerate(){
+            if i%BUFFER_WIDTH == 0{
+                current_char = 0;
+                rw_start += 1;
+            }
+            let screen_char:ScreenChar = writer.buffer.characters[rw_start][current_char].read();
+            assert_eq!(char::from(screen_char.ascii_char),c);  
+            current_char += 1; 
+        }
+    });
+}
+
