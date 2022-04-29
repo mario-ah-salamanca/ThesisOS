@@ -2,8 +2,10 @@
 #![cfg_attr(test, no_main)]
 #![feature(custom_test_frameworks)]
 #![test_runner(crate::test_runner)]
+#![feature(const_mut_refs)]
 #![reexport_test_harness_main = "test_main"]
 #![feature(abi_x86_interrupt)]
+#![feature(alloc_error_handler)]
 use core::panic::PanicInfo;
 
 #[path ="modules/uart/serial.rs"]pub mod serial;
@@ -11,6 +13,8 @@ use core::panic::PanicInfo;
 #[path = "interrupts/interrupts.rs"] pub mod interrupts;
 #[path = "interrupts/gdt.rs"] pub mod gdt;
 #[path = "memory/memory.rs"] pub mod memory;
+#[path = "memory/allocator.rs"] pub mod allocator;
+extern crate alloc;
 
 
 pub fn init(){
@@ -72,9 +76,12 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
     }
 }
 
+//memory allocation error handler
+#[alloc_error_handler]
+fn alloc_error_handler(layout: alloc::alloc::Layout) -> ! {
+    panic!("allocation error: {:?}", layout)
+}
 /// Entry point for `cargo test`
-/// 
-
 #[cfg(test)]
 use bootloader::{entry_point, BootInfo};
 

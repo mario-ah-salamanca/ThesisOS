@@ -89,39 +89,3 @@ unsafe impl FrameAllocator<Size4KiB> for EmptyFrameAllocator{
         None
     }
 }
-
-// Testing
-/* 
-pub unsafe fn translate_addr(addr: VirtAddr, physical_memory_offset: VirtAddr) -> Option<PhysAddr>{
-    translate_addr_inner(addr, physical_memory_offset)
-}
-
-fn translate_addr_inner(addr: VirtAddr, physical_memory_offset: VirtAddr)-> Option<PhysAddr>{
-    use x86_64::structures::paging::page_table::FrameError;
-    use x86_64::structures::paging::PageTableIndex;
-    use x86_64::registers::control::Cr3;
-
-    // read the active l4 frame from cr3
-    let (level_4_table_frame,_) = Cr3::read();
-
-    let table_indexes:[PageTableIndex;4] = [addr.p4_index(),addr.p3_index(),addr.p2_index(),addr.p1_index()];
-
-    let mut frame = level_4_table_frame;
-
-    for &index in &table_indexes{
-        // convert frame into page table references
-        let virt = physical_memory_offset + frame.start_address().as_u64();
-        let table_ptr: *const PageTable = virt.as_ptr();
-        let table = unsafe{&* table_ptr};
-        
-        let entry = &table[index];
-        frame = match entry.frame() {
-            Ok(frame) => frame,
-            Err(FrameError::FrameNotPresent) => return None,
-            Err(FrameError::HugeFrame) => panic!("huge page not supported"),
-        };
-    }
-    // calculate the physical address by addding the page offset
-    Some(frame.start_address() + u64::from(addr.page_offset()))
-}
- */
