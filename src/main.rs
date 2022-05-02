@@ -4,10 +4,9 @@
 #![test_runner(os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 extern crate alloc;
-use os::{println};
+use os::{println, task::{Task,simple_executor::SimpleExecutor},task::keyboard};
 use core::panic::PanicInfo;
 use bootloader::{BootInfo,entry_point};
-use alloc::{boxed::Box,vec,vec::Vec,rc::Rc};
 
 entry_point!(kernel_main);
 
@@ -28,23 +27,14 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     //initialize heap mem
     allocator::init_heap(&mut mapper,&mut frame_allocator).expect("heap initialization failed");
 
-    let heap_value = Box::new(41);
-    println!("heap_value at {:p}",heap_value);
+    //keyboard
 
-    //create a dynamic sized vector
-    let mut vec = Vec::new();
-    for i in 0..500{
-        vec.push(i);
-    }
-    println!("vec at {:p}",vec.as_slice());
-
-    //create a referece counted vector -> will be freed when count reaches 0
-    let referece_counted = Rc::new(vec![1,2,3]);
-    let cloned_reference = referece_counted.clone();
-    println!("current reference count is {}", Rc::strong_count(&cloned_reference));
-    core::mem::drop(referece_counted);
-    println!("reference count is {} now", Rc::strong_count(&cloned_reference));
-
+    let mut executor = SimpleExecutor::new();
+    executor.spawn(Task::new(example_task()));
+    executor.spawn(Task::new(keyboard::print_keypresses())); // new
+    executor.run();
+    
+    
     //tests
     #[cfg(test)]
     test_main();
@@ -53,7 +43,14 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     os::hlt_loop();
 }
 
+async fn async_number() -> u32 {
+    42
+}
 
+async fn example_task() {
+    let number = async_number().await;
+    println!("async number: {}", number);
+}
 
 /// This function is called on panic.
 #[cfg(not(test))] //use in cargo run 

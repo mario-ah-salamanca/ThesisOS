@@ -14,6 +14,7 @@ use core::panic::PanicInfo;
 #[path = "interrupts/gdt.rs"] pub mod gdt;
 #[path = "memory/memory.rs"] pub mod memory;
 #[path = "memory/allocator.rs"] pub mod allocator;
+#[path = "task/mod.rs"] pub mod task;
 extern crate alloc;
 
 

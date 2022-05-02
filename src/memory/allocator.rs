@@ -8,9 +8,10 @@ use x86_64::{
 };
 #[path = "../allocators/bump.rs"] pub mod bump;
 #[path = "../allocators/linked_list.rs"] pub mod linked_list;
-
+#[path = "../allocators/fixed_sized_block.rs"] pub mod fixed_size_block;
 //use bump::BumpAllocator;
-use linked_list::LinkedListAllocator;
+//use linked_list::LinkedListAllocator;
+use fixed_size_block::FixedSizeBlockAllocator;
 pub const HEAP_START: usize = 0x_4444_4444_0000;
 pub const HEAP_SIZE: usize = 100*1024; // 100Kib
 
@@ -90,4 +91,4 @@ unsafe impl GlobalAlloc for Dummy {
 // alloc_zeored and realloc methods have default implementations
 // dont need to implemented again
 #[global_allocator]
-static ALLOCATOR:Locked<LinkedListAllocator> = Locked::new(LinkedListAllocator::new());
+static ALLOCATOR:Locked<FixedSizeBlockAllocator> = Locked::new(FixedSizeBlockAllocator::new());
