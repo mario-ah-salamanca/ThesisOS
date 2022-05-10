@@ -65,6 +65,7 @@ impl Writer{
     pub fn write_byte(&mut self, byte:u8){
         match byte{
             b'\n' => self.new_line(),
+            0x8 =>self.clear_byte(),
             byte =>{
                 // new line at the end of "terminal"
                 if self.column_position >= BUFFER_WIDTH{
@@ -91,10 +92,24 @@ impl Writer{
             match byte{
                 // printable ascii byte or new line 
                 // is going to be written
-                0x20..=0x7e | b'\n' => self.write_byte(byte),
+                0x20..=0x7e | b'\n' | 0x08 => self.write_byte(byte),
                 // not part of printable ASCII range
                 _=> self.write_byte(0xfe),
             }
+        }
+    }
+
+    fn clear_byte(&mut self){
+        let blank = ScreenChar{
+            ascii_char:b' ',
+            color_code:self.color_code,
+        };
+        let col = self.column_position;
+        if col == 0{
+            return;
+        }else{
+            self.buffer.characters[BUFFER_HEIGHT-1][col-1].write(blank);
+            self.column_position -= 1;
         }
     }
 
