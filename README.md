@@ -13,13 +13,13 @@ The goal of this project is to investigate recent Educational Operating Systems 
 Install rustup by following the instructions at https://rustup.rs.
 
 * Rust nightly
-  ** You need a nightly compiler to run the code in this repository.
-  ** set the nightly compiler for the current directory by running ``rustup override set nightly``.
-  ** You can check that you have a nightly version installed by running rustc --version: The version number should contain -nightly at the end.
-  ** This project has been tested runing on rustc 1.62.0-nightly (60e50fc1c 2022-04-04).
+  * You need a nightly compiler to run the code in this repository.
+  * set the nightly compiler for the current directory by running ``rustup override set nightly``.
+  * You can check that you have a nightly version installed by running rustc --version: The version number should contain -nightly at the end.
+  * This project has been tested runing on rustc 1.62.0-nightly (60e50fc1c 2022-04-04).
 * QEMU >= 6.2.0
 * For this project the bootimage tool is needed install it using:
-  ** ``cargo install bootimage``
+  * ``cargo install bootimage``
 
 
 ## How to run
