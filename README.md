@@ -32,7 +32,7 @@ Install rustup by following the instructions at https://rustup.rs.
 $ git clone git@github.com:mario-ah-salamanca/ThesisOS.git
 $ cd ThesisOS
 $ cargo install bootimage
-$ rustup component add llvm-tools-preview`
+$ rustup component add llvm-tools-preview
 $ cargo bootimage
 $ cargo run
 ```
