@@ -32,7 +32,7 @@ $ cargo run
 
 # Testing
 
-A test framework is included with Thesis OS you can run all test using ```cargo test``
+A test framework is included with Thesis OS you can run all test using ``cargo test``
 or by specifying the test name using the  ``--test`` flag
 
 
