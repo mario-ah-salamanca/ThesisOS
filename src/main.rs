@@ -43,12 +43,12 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     os::hlt_loop();
 }
 
-async fn async_number() -> u32 {
-    42
+async fn async_numbers() -> u32 {
+    1000
 }
 
 async fn example_task() {
-    let number = async_number().await;
+    let number = async_numbers().await;
     println!("async number: {}", number);
 }
 
