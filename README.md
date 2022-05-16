@@ -14,12 +14,14 @@ Install rustup by following the instructions at https://rustup.rs.
 
 * Rust nightly
   * You need a nightly compiler to run the code in this repository.
-  * set the nightly compiler for the current directory by running ``rustup override set nightly``.
+  * set the nightly compiler for the current directory by running ``rustup update nightly --force to update`` to update to the latest nightly even if some components such as ``rustfmt`` are missing it.
   * You can check that you have a nightly version installed by running rustc --version: The version number should contain -nightly at the end.
   * This project has been tested runing on rustc 1.62.0-nightly (60e50fc1c 2022-04-04).
 * QEMU >= 6.2.0
 * For this project the bootimage tool is needed install it using:
   * ``cargo install bootimage``
+* In order to run the bootloader you need to have ``llvm-tools-preview`` installed
+  * you can do so by running ``rustup component add llvm-tools-preview``  
 
 
 ## How to run
@@ -27,6 +29,7 @@ Install rustup by following the instructions at https://rustup.rs.
 ```bash
 $ git clone git@github.com:mario-ah-salamanca/ThesisOS.git
 $ cd ThesisOS
+$ cargo bootimage
 $ cargo run
 ```
 
