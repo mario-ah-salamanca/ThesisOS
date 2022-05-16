@@ -4,7 +4,7 @@
 #![test_runner(os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 extern crate alloc;
-use os::{println, task::{Task,simple_executor::SimpleExecutor},task::keyboard};
+use os::{println, task::{Task,executor::Executor},task::keyboard};
 use core::panic::PanicInfo;
 use bootloader::{BootInfo,entry_point};
 
@@ -33,9 +33,9 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 
     //keyboard
 
-    let mut executor = SimpleExecutor::new();
+    let mut executor = Executor::new();
     executor.spawn(Task::new(example_task()));
-    executor.spawn(Task::new(keyboard::print_keypresses())); // new
+    executor.spawn(Task::new(keyboard::print_keypresses()));
     executor.run();
 }
 
