@@ -9,7 +9,9 @@
 The linux operating system is one of the most popular operating system(OS) nowdays, however it has become too complex for teaching OS fundamentals. Furthermore there has been a push for using Rust instead of C for writting more robust OS kernels. 
 The goal of this project is to investigate recent Educational Operating Systems with a specific focus in Rust.
 # Building
+This project runs only in Linux distributions
 ## Set Up Environment
+
 Install rustup by following the instructions at https://rustup.rs.
 
 * Rust nightly
